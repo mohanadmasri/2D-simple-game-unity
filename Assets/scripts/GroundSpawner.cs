@@ -4,43 +4,72 @@ using UnityEngine;
 
 public class GroundSpawner : MonoBehaviour
 {
-    public GameObject Ground1, Ground2, Ground3;
-    bool hasGround = true;
+    [Header("New Ground Prefab")]
+    public GameObject GroundNew;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [Header("Spawn Settings")]
+    public float groundSpacing = 20f;
+    public float spawnCooldown = 0.8f;
 
-    // Update is called once per frame
+    [Header("Random Ground Heights - Lower values for new ground")]
+    public float groundY1 = -4.20f;
+    public float groundY2 = -3.85f;
+    public float groundY3 = -3.50f;
+
+    private bool hasGround = true;
+    private bool canSpawn = true;
+
     void Update()
     {
-        if (!hasGround)
+        if (!hasGround && canSpawn)
         {
             SpawnGround();
             hasGround = true;
+            StartCoroutine(SpawnCooldown());
         }
     }
 
     public void SpawnGround()
     {
+        if (GroundNew == null)
+        {
+            Debug.LogWarning("GroundNew is not assigned in the Inspector!");
+            return;
+        }
+
         int randomNum = Random.Range(1, 4);
+
+        float selectedY = groundY1;
 
         if (randomNum == 1)
         {
-            Instantiate(Ground1, new Vector3(transform.position.x + 20f, -4.17f, 0), Quaternion.identity);
+            selectedY = groundY1;
         }
 
         if (randomNum == 2)
         {
-            Instantiate(Ground2, new Vector3(transform.position.x + 20f, -2.05f, 0), Quaternion.identity);
+            selectedY = groundY2;
         }
 
         if (randomNum == 3)
         {
-            Instantiate(Ground3, new Vector3(transform.position.x + 20f, -1.04f, 0), Quaternion.identity);
+            selectedY = groundY3;
         }
+
+        Vector3 spawnPosition = new Vector3(
+            transform.position.x + groundSpacing,
+            selectedY,
+            0
+        );
+
+        Instantiate(GroundNew, spawnPosition, Quaternion.identity);
+    }
+
+    IEnumerator SpawnCooldown()
+    {
+        canSpawn = false;
+        yield return new WaitForSeconds(spawnCooldown);
+        canSpawn = true;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -58,4 +87,42 @@ public class GroundSpawner : MonoBehaviour
             hasGround = false;
         }
     }
+
+    /*
+    ============================
+    Old GroundSpawner Code
+    ============================
+
+    public GameObject Ground1, Ground2, Ground3;
+    bool hasGround = true;
+
+    void Update()
+    {
+        if (!hasGround)
+        {
+            SpawnGround();
+            hasGround = true;
+        }
+    }
+
+    public void SpawnGround()
+    {
+        int randomNum = Random.Range(1, 4);
+
+        if (randomNum == 1)
+        {
+            Instantiate(Ground1, new Vector3(transform.position.x + 15f, -4.17f, 0), Quaternion.identity);
+        }
+
+        if (randomNum == 2)
+        {
+            Instantiate(Ground2, new Vector3(transform.position.x + 15f, -2.05f, 0), Quaternion.identity);
+        }
+
+        if (randomNum == 3)
+        {
+            Instantiate(Ground3, new Vector3(transform.position.x + 15f, -1.04f, 0), Quaternion.identity);
+        }
+    }
+    */
 }

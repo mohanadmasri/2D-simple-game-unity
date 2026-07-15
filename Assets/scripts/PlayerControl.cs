@@ -16,7 +16,9 @@ public class PlayerControl : MonoBehaviour
     public float scoreInt = 0;
     public GameObject gameOverScreen;
 
-    // Start is called before the first frame update
+    [Header("Game Over Settings")]
+    public float gameOverDelay = 1.8f;
+
     void Start()
     {
         gameOverScreen.SetActive(false);
@@ -24,7 +26,6 @@ public class PlayerControl : MonoBehaviour
         animition = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!isGameOver)
@@ -43,7 +44,7 @@ public class PlayerControl : MonoBehaviour
                 jumpCount += 1;
             }
 
-            scoreInt = scoreInt + Time.deltaTime * 1087;
+            scoreInt = scoreInt + Time.deltaTime * 7;
             score.text = "Score: " + scoreInt.ToString("0.000");
         }
     }
@@ -62,11 +63,28 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("DeathZone"))
+        {
+            GameOver();
+        }
+    }
+
     public void GameOver()
     {
+        if (isGameOver)
+        {
+            return;
+        }
+
         isGameOver = true;
+
+        rb2d.linearVelocity = Vector2.zero;
+
         animition.SetTrigger("dead");
-        Invoke("GameOverScreenShow", 1f);
+
+        Invoke("GameOverScreenShow", gameOverDelay);
     }
 
     private void GameOverScreenShow()
