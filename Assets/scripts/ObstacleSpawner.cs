@@ -34,4 +34,11 @@ public class ObstacleSpawner : MonoBehaviour
             Instantiate(obstacle2, new Vector3(transform.position.x, 1.8f, 0), Quaternion.identity);
         }
     }
+
+    public void QuitGame()
+    {
+        UnityEditor.EditorApplication.isPlaying = false;
+        Application.Quit();
+    }
+
 }
