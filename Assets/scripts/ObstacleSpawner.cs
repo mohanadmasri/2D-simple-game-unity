@@ -35,10 +35,6 @@ public class ObstacleSpawner : MonoBehaviour
         }
     }
 
-    public void QuitGame()
-    {
-        UnityEditor.EditorApplication.isPlaying = false;
-        Application.Quit();
-    }
+    
 
 }
